@@ -1,0 +1,38 @@
+service: sample-sls-express-app
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  # region: eu-central-1
+
+functions:
+  app:
+    handler: app.server
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: true
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+  winston:
+    handler: winston.handler
+    events:
+      - http:
+          path: /winston
+          method: get
+  consolelog:
+    runtime: provided
+    handler: consolelog.handler
+    events:
+      - http:
+          path: /consolelog
+          method: get
+    layers:
+      - arn:aws:lambda:us-east-1:553035198032:layer:nodejs11:3
+
+plugins:
+  - serverless-offline
